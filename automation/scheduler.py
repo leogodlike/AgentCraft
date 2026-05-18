@@ -288,17 +288,21 @@ class CronScheduler:
             return "[Error] AgentExecutor factory not configured"
 
         executor = self._agent_executor_factory()
+        if executor is None:
+            return "[Error] AgentExecutor factory returned None"
 
         # Run in isolated environment (fresh session)
-        result = await executor.run(
-            task=job.task,
-            agent_type=job.agent_type,
-            timeout=job.timeout,
-            fork_context=None,  # No fork context for cron jobs
-            is_fork_child=False,
-        )
-
-        return result
+        # SimpleAgentRunner only supports task, agent_type, timeout
+        try:
+            result = await executor.run(
+                task=job.task,
+                agent_type=job.agent_type,
+                timeout=job.timeout,
+            )
+            return result
+        except Exception as e:
+            logger.error(f"[CronScheduler] Agent task failed: {e}")
+            return f"[Error] {str(e)[:200]}"
 
     # ===== Delivery =====
 
