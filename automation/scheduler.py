@@ -76,6 +76,10 @@ class CronScheduler:
 
     def stop(self) -> None:
         """Stop the scheduler."""
+        if not self._scheduler.running:
+            logger.info("[CronScheduler] Already stopped")
+            return
+
         self._scheduler.shutdown(wait=False)
 
         # Cancel running tasks
@@ -91,8 +95,8 @@ class CronScheduler:
         # Store in database
         created = self._store.create_job(job)
 
-        # Schedule if enabled
-        if job.enabled:
+        # Schedule if enabled (only if scheduler is already running)
+        if job.enabled and self._scheduler.running:
             self._schedule_job(created)
 
         return created

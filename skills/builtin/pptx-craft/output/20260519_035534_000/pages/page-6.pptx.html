@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1280, height=720">
+  <title>三大学习类型 - 什么是机器学习</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+    * { font-family: 'Noto Sans SC', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+    body { width: 1280px; height: 720px; overflow: hidden; }
+  </style>
+</head>
+<body class="w-[1280px] h-[720px] overflow-hidden bg-white">
+  <!-- 顶部装饰线 -->
+  <div class="w-full h-[1px] bg-[#c7020e]"></div>
+  
+  <!-- 标题栏 -->
+  <div class="w-full h-[90px] bg-white border-b border-[#d9d9d9] flex items-center px-8 gap-3">
+    <div class="w-[4px] h-[30px] bg-[#c7020e]"></div>
+    <span class="text-[35px] font-bold text-black">三大学习类型</span>
+    <span class="text-[19px] text-[#8c8c8c] ml-1">Three Learning Paradigms</span>
+    <span class="ml-auto text-[19px] text-[#8c8c8c]">06</span>
+  </div>
+  
+  <!-- 内容区 -->
+  <div class="w-full h-[calc(720px-90px-1px)] bg-white flex p-8 gap-6">
+    <!-- 监督学习 -->
+    <div class="flex-1 border border-[#d9d9d9] bg-white flex flex-col">
+      <div class="bg-[#c7020e] py-3 px-5 text-center">
+        <span class="text-[19px] font-bold text-white">监督学习</span>
+      </div>
+      <div class="p-5 flex flex-col flex-1">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="border border-[#c7020e] bg-[#fff1ef] text-[#c7020e] px-2 py-0.5 text-[16px] font-bold">⭐ 最常用</span>
+        </div>
+        <p class="text-[16px] text-black/70 mb-3">有"正确答案"的训练数据（标签），模型学习从输入到输出的映射关系。</p>
+        <div class="bg-[#f2f2f2] p-3 mb-2 flex-1">
+          <span class="text-[16px] font-bold text-black">核心特点</span>
+          <ul class="text-[16px] text-black/70 mt-1 list-disc list-inside">
+            <li>需要人工标注数据</li>
+            <li>预测结果有明确评判标准</li>
+            <li>精度通常较高</li>
+          </ul>
+        </div>
+        <div class="mt-auto">
+          <span class="text-[16px] font-bold text-black">应用案例</span>
+          <div class="flex flex-wrap gap-1 mt-1">
+            <span class="border border-[#d9d9d9] bg-[#f2f2f2] px-2 py-0.5 text-[14px]">猫狗分类</span>
+            <span class="border border-[#d9d9d9] bg-[#f2f2f2] px-2 py-0.5 text-[14px]">房价预测</span>
+            <span class="border border-[#d9d9d9] bg-[#f2f2f2] px-2 py-0.5 text-[14px]">垃圾邮件过滤</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 无监督学习 -->
+    <div class="flex-1 border border-[#d9d9d9] bg-white flex flex-col">
+      <div class="bg-[#8c8c8c] py-3 px-5 text-center">
+        <span class="text-[19px] font-bold text-white">无监督学习</span>
+      </div>
+      <div class="p-5 flex flex-col flex-1">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="border border-[#8c8c8c] bg-[#f2f2f2] text-[#8c8c8c] px-2 py-0.5 text-[16px] font-bold">🔍 无标签</span>
+        </div>
+        <p class="text-[16px] text-black/70 mb-3">没有标签的数据，模型自己发现隐藏的结构、模式或聚类关系。</p>
+        <div class="bg-[#f2f2f2] p-3 mb-2 flex-1">
+          <span class="text-[16px] font-bold text-black">核心特点</span>
+          <ul class="text-[16px] text-black/70 mt-1 list-disc list-inside">
+            <li>无需人工标注</li>
+            <li>探索数据内在结构</li>
+            <li>结果需要人工解读</li>
+          </ul>
+        </div>
+        <div class="mt-auto">
+          <span class="text-[16px] font-bold text-black">应用案例</span>
+          <div class="flex flex-wrap gap-1 mt-1">
+            <span class="border border-[#d9d9d9] bg-[#f2f2f2] px-2 py-0.5 text-[14px]">用户分群</span>
+            <span class="border border-[#d9d9d9] bg-[#f2f2f2] px-2 py-0.5 text-[14px]">异常检测</span>
+            <span class="border border-[#d9d9d9] bg-[#f2f2f2] px-2 py-0.5 text-[14px]">推荐系统</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 强化学习 -->
+    <div class="flex-1 border border-[#d9d9d9] bg-white flex flex-col">
+      <div class="bg-[#c7020e] py-3 px-5 text-center">
+        <span class="text-[19px] font-bold text-white">强化学习</span>
+      </div>
+      <div class="p-5 flex flex-col flex-1">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="border border-[#c7020e] bg-[#fff1ef] text-[#c7020e] px-2 py-0.5 text-[16px] font-bold">🎮 试错</span>
+        </div>
+        <p class="text-[16px] text-black/70 mb-3">通过试错 + 奖励/惩罚信号学习最优策略，类似人类学习过程。</p>
+        <div class="bg-[#f2f2f2] p-3 mb-2 flex-1">
+          <span class="text-[16px] font-bold text-black">核心特点</span>
+          <ul class="text-[16px] text-black/70 mt-1 list-disc list-inside">
+            <li>无需预先收集数据</li>
+            <li>与环境交互中学习</li>
+            <li>追求长期累积回报</li>
+          </ul>
+        </div>
+        <div class="mt-auto">
+          <span class="text-[16px] font-bold text-black">应用案例</span>
+          <div class="flex flex-wrap gap-1 mt-1">
+            <span class="border border-[#d9d9d9] bg-[#f2f2f2] px-2 py-0.5 text-[14px]">AlphaGo</span>
+            <span class="border border-[#d9d9d9] bg-[#f2f2f2] px-2 py-0.5 text-[14px]">自动驾驶</span>
+            <span class="border border-[#d9d9d9] bg-[#f2f2f2] px-2 py-0.5 text-[14px]">机器人控制</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

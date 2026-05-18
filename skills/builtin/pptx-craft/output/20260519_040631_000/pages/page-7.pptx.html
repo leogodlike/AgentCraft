@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { width: 1280px; height: 720px; font-family: 'Noto Sans SC', sans-serif; background: #fff; }
+.ppt-slide { width: 1280px; height: 720px; display: flex; flex-direction: column; }
+.top-line { width: 100%; height: 4px; background: #c7020e; }
+.title-bar { height: 90px; display: flex; align-items: center; padding: 0 50px; border-bottom: 1px solid #e8e8e8; }
+.red-bar { width: 4px; height: 30px; background: #c7020e; margin-right: 12px; }
+.title { font-size: 32px; font-weight: 700; color: #000; }
+.page-num { font-size: 16px; color: #999; margin-left: auto; }
+.content { flex: 1; padding: 40px 60px; }
+.desc { font-size: 18px; color: #333; line-height: 1.7; margin-bottom: 25px; }
+.flow-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 20px 0; flex-wrap: wrap; }
+.flow-item { background: #f5f5f5; border: 1px solid #ddd; border-radius: 8px; padding: 12px 16px; text-align: center; min-width: 100px; }
+.flow-item .label { font-size: 13px; color: #666; }
+.flow-item .value { font-size: 14px; font-weight: 700; color: #333; margin-top: 4px; }
+.flow-arrow { font-size: 24px; color: #c7020e; }
+.flow-inject { background: #fff5f5; border: 2px solid #c7020e; border-radius: 8px; padding: 12px 16px; text-align: center; }
+.flow-inject .label { font-size: 13px; color: #c7020e; }
+.flow-inject .value { font-size: 14px; font-weight: 700; color: #c7020e; margin-top: 4px; }
+.two-col { display: flex; gap: 30px; margin-top: 20px; }
+.col-card { flex: 1; background: #fafafa; border: 1px solid #eee; border-radius: 10px; padding: 20px; }
+.col-card .c-title { font-size: 18px; font-weight: 700; color: #000; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #c7020e; }
+.col-card ul { list-style: none; padding: 0; }
+.col-card ul li { padding: 8px 0; font-size: 15px; color: #444; line-height: 1.5; padding-left: 20px; position: relative; }
+.col-card ul li::before { content: '•'; color: #c7020e; font-weight: 700; position: absolute; left: 0; }
+</style>
+</head>
+<body>
+<div class="ppt-slide">
+  <div class="top-line"></div>
+  <div class="title-bar">
+    <div class="red-bar"></div>
+    <span class="title">程序化故障注入（Programmed Fault Injection）</span>
+    <span class="page-num">7 / 15</span>
+  </div>
+  <div class="content">
+    <div class="desc">对<strong>成功轨迹</strong>，通过<strong>扰动算子 Π</strong> 在某个步骤引入已知错误，<strong>大规模生成带标注的训练数据</strong></div>
+    
+    <div class="flow-row">
+      <div class="flow-item">
+        <div class="label">✅</div>
+        <div class="value">成功轨迹</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-inject">
+        <div class="label">⚠️ 注入扰动 Π</div>
+        <div class="value">步骤 n 引入错误</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-item" style="background:#fff0f0;border-color:#c7020e;">
+        <div class="label">❌</div>
+        <div class="value" style="color:#c7020e;">系统失败</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-item" style="background:#f0f7ff;border-color:#c7020e;">
+        <div class="label">📌 已知</div>
+        <div class="value">决定性错误点</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="col-card">
+        <div class="c-title">扰动算子类型</div>
+        <ul>
+          <li>信息检索错误 — 返回错误文档/数据</li>
+          <li>推理步骤错误 — 逻辑跳跃/错误推导</li>
+          <li>代码执行错误 — 语法/逻辑缺陷</li>
+          <li>工具调用错误 — 参数/API使用不当</li>
+          <li>上下文理解错误 — 信息遗漏/误解</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <div class="c-title">数据生成优势</div>
+        <ul>
+          <li>完全自动化，<strong>无需人工标注</strong></li>
+          <li>已知精确的故障位置和类型</li>
+          <li>可控制注入难度和多样性</li>
+          <li>适用于多种多智能体框架</li>
+          <li>支持大规模扩展</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

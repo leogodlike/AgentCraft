@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { width: 1280px; height: 720px; font-family: 'Noto Sans SC', sans-serif; background: #fff; }
+.ppt-slide { width: 1280px; height: 720px; display: flex; flex-direction: column; }
+.top-line { width: 100%; height: 4px; background: #c7020e; }
+.title-bar { height: 90px; display: flex; align-items: center; padding: 0 50px; border-bottom: 1px solid #e8e8e8; }
+.red-bar { width: 4px; height: 30px; background: #c7020e; margin-right: 12px; }
+.title { font-size: 32px; font-weight: 700; color: #000; }
+.page-num { font-size: 16px; color: #999; margin-left: auto; }
+.content { flex: 1; padding: 40px 60px; }
+.desc { font-size: 18px; color: #333; line-height: 1.7; margin-bottom: 25px; }
+.steps { display: flex; flex-direction: column; gap: 15px; }
+.step-card { display: flex; align-items: flex-start; gap: 15px; }
+.step-num { width: 36px; height: 36px; background: #c7020e; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+.step-body { flex: 1; }
+.step-body .step-title { font-size: 17px; font-weight: 700; color: #000; margin-bottom: 4px; }
+.step-body .step-desc { font-size: 15px; color: #555; line-height: 1.5; }
+.insight-box { margin-top: 25px; background: #f0f7ff; border: 1px solid #c7020e; border-radius: 10px; padding: 18px 22px; }
+.insight-box .insight-title { font-size: 15px; font-weight: 700; color: #c7020e; margin-bottom: 6px; }
+.insight-box .insight-desc { font-size: 14px; color: #555; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="ppt-slide">
+  <div class="top-line"></div>
+  <div class="title-bar">
+    <div class="red-bar"></div>
+    <span class="title">反事实干预（Counterfactual Replay）</span>
+    <span class="page-num">6 / 15</span>
+  </div>
+  <div class="content">
+    <div class="desc">对每个<strong>失败轨迹</strong>，用分析器智能体（π_analyzer）逐步提出<strong>最小侵入性修正</strong></div>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">分析失败轨迹</div>
+          <div class="step-desc">π_analyzer 逐步骤分析执行记录，识别可能的错误点</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">提出最小修正</div>
+          <div class="step-desc">对每个步骤提出最小侵入性的修正方案</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">重新模拟（Replay）</div>
+          <div class="step-desc">依次对每一步进行修正干预，重新执行整个流程</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title" style="color:#c7020e;">定位问题智能体 ✅</div>
+          <div class="step-desc">找到<strong>最早</strong>能将系统从失败转为成功的那一步 → 该步的活跃智能体就是<strong>问题智能体</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">💡 核心思想</div>
+      <div class="insight-desc">通过「修正→重演」的干预实验，<strong>定位最小变化点</strong>——即最关键的故障根因</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
