@@ -1,0 +1,17 @@
+.obsidian/
+logs/
+.gitignore
+.env
+__pycache__/
+*.pyc
+.venv/
+mlflow.db
+mlruns/
+mlartifacts/
+.DS_Store
+*.pptx
+.ipynb_checkpoints/
+*.ipynb
+slides/
+.clawhub/node_modules/
+skills/builtin/*/node_modules/
