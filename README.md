@@ -5,19 +5,15 @@ AI Agent with LLM and tools.
 ## 快速启动
 
 ```bash
-# 1. 创建虚拟环境
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+# 1. 安装依赖 (自动创建 .venv)
+uv sync
 
-# 2. 安装依赖
-pip install -e .
-
-# 3. 配置环境变量
+# 2. 配置环境变量
 cp ".env copy" .env
 # 编辑 .env 填入你的 API Key
 
-# 4. 启动服务
-python run_app.py
+# 3. 启动服务
+uv run python run_app.py
 ```
 
 服务将在 http://127.0.0.1:8000/canvas 启动。

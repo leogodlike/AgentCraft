@@ -171,11 +171,15 @@ _hook_executor: HookExecutor | None = None
 # ===== Goal (Long-running task control) =====
 _goal_managers: dict[str, GoalManager] = {}  # session_id -> GoalManager
 
+# ===== Cron Scheduler =====
+_cron_store: CronStore | None = None
+_cron_scheduler: CronScheduler | None = None
+
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     """Initialize MCP servers and channels on startup, shut down on exit."""
-    global _mcp_manager, _unified_registry
+    global _mcp_manager, _unified_registry, _cron_store, _cron_scheduler
 
     _app.state.session_manager = _session_manager
     _skill_loader.load()
@@ -346,12 +350,30 @@ async def lifespan(_app: FastAPI):
     _app.state.hook_executor = _hook_executor
     logger.info(f"[Hooks] HookExecutor initialized with {len(_hook_executor._hooks)} hooks")
 
+    # Cron Scheduler initialization
+    global _cron_store, _cron_scheduler
+    from automation import CronStore, CronScheduler
+    from automation.scheduler import set_scheduler
+    _cron_store = CronStore()
+    _cron_scheduler = CronScheduler(
+        store=_cron_store,
+        agent_executor_factory=get_agent_runner,
+    )
+    _cron_scheduler.start()
+    set_scheduler(_cron_scheduler)
+    _app.state.cron_scheduler = _cron_scheduler
+    logger.info("[Cron] Scheduler initialized")
+
     await _channel_router.start_all()
 
     yield
 
     # Cleanup
     await _channel_router.stop_all()
+    # Cron shutdown
+    if _cron_scheduler:
+        _cron_scheduler.stop()
+        logger.info("[Cron] Scheduler stopped")
     if _llm_queue:
         await _llm_queue.stop()
     if _mcp_manager:
@@ -898,37 +920,6 @@ async def acp_broadcast(request: Request) -> dict[str, Any]:
 
 
 # ===== Cron API =====
-
-_cron_store: CronStore | None = None
-_cron_scheduler: CronScheduler | None = None
-
-
-@app.on_event("startup")
-async def init_cron():
-    """Initialize cron scheduler."""
-    global _cron_store, _cron_scheduler
-
-    from automation import CronStore, CronScheduler
-    from automation.scheduler import set_scheduler
-
-    _cron_store = CronStore()
-    _cron_scheduler = CronScheduler(
-        store=_cron_store,
-        agent_executor_factory=get_agent_runner,
-    )
-    _cron_scheduler.start()
-    set_scheduler(_cron_scheduler)
-    _app.state.cron_scheduler = _cron_scheduler
-    logger.info("[Cron] Scheduler initialized")
-
-
-@app.on_event("shutdown")
-async def shutdown_cron():
-    """Shutdown cron scheduler."""
-    if _cron_scheduler:
-        _cron_scheduler.stop()
-        logger.info("[Cron] Scheduler stopped")
-
 
 @app.get("/cron/status")
 def cron_status() -> dict[str, Any]:
@@ -1720,6 +1711,8 @@ async def _handle_streaming_via_queue(
 
                 # Clean orphan tool messages before next turn
                 messages = clean_orphan_tool_messages(messages)
+                
+                # executor -> verify
 
             # Stream complete
             yield f"data: {{\"finish_reason\": \"{finish_reason or 'stop'}\"}}\n\n"
