@@ -1,6 +1,8 @@
-# AgentCraft Gateway
+# AgentCraft
 
 AI Agent with LLM and tools.
+
+![系统截图](specs/img.png)
 
 ## 快速启动
 
