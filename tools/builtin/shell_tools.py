@@ -11,7 +11,8 @@ from tools import tool
     name="Bash",
     description="Execute a shell command and return its output. "
                 "Use this to run scripts, compilers, tests, or any CLI tool. "
-                "Timeout is 60 seconds. Interactive commands are not supported.",
+                "Default timeout is 600 seconds (10 minutes). "
+                "Interactive commands are not supported.",
     parameters={
         "type": "object",
         "properties": {
@@ -19,35 +20,35 @@ from tools import tool
                 "type": "string",
                 "description": "The shell command to execute",
             },
-            "workdir": {
-                "type": "string",
-                "description": "Working directory for the command (default: current directory)",
+            "timeout": {
+                "type": "integer",
+                "description": "Timeout in seconds (default: 600, max: 3600)",
             },
         },
         "required": ["command"],
     },
 )
-def bash(command: str, workdir: str | None = None) -> str:
+def bash(command: str, timeout: int = 600) -> str:
+    # Clamp timeout to max 3600 seconds (1 hour)
+    timeout_seconds = min(max(timeout, 1), 3600)
     try:
-        cwd = workdir if workdir else None
         result = subprocess.run(
             command,
             shell=True,
             capture_output=True,
             text=True,
-            timeout=60,
-            cwd=cwd,
+            timeout=timeout_seconds,
         )
         output = []
         if result.stdout:
-            output.append(result.stdout.strip()[:5000])
+            output.append(result.stdout.strip())
         if result.stderr:
-            output.append(f"[stderr]\n{result.stderr.strip()[:2000]}")
+            output.append(f"[stderr]\n{result.stderr.strip()}")
         if result.returncode != 0:
             output.insert(0, f"Exit code: {result.returncode}")
         return "\n".join(output) if output else f"(completed with no output, exit code {result.returncode})"
     except subprocess.TimeoutExpired:
-        return "[Error] Command timed out after 60s"
+        return f"[Error] Command timed out after {timeout_seconds}s"
     except Exception as e:
         return f"[Error] {e}"
 

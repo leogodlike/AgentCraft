@@ -14,7 +14,6 @@ When the user asks to generate/create a PPT presentation, obey these rules in or
    Then use Write tool to create outline.md in the output directory.
 
 2. **Prohibited:** Do NOT create sub-agents. Do NOT use Agent tool.
-   Do NOT use WebSearch, WebFetch, or search tools unless user explicitly requests research.
 
 3. **Direct execution:** Generate HTML slides yourself, then call convert.js to export PPTX.
 
@@ -100,18 +99,20 @@ mkdir -p {output_dir}/pages
   </style>
 </head>
 <body class="w-[1280px] h-[720px] overflow-hidden bg-white">
-  <!-- 顶部装饰线 -->
-  <div class="w-full h-[1px] bg-[#c7020e]"></div>
-  <!-- 标题栏 -->
-  <div class="w-full h-[90px] bg-white border-b border-[#d9d9d9] flex items-center px-8 gap-3">
-    <div class="w-[4px] h-[30px] bg-[#c7020e]"></div>
-    <span class="text-[35px] font-bold text-black">{标题}</span>
-    <span class="text-[19px] text-[#8c8c8c] ml-1">{英文副标题}</span>
-    <span class="ml-auto text-[19px] text-[#8c8c8c]">{页码}</span>
-  </div>
-  <!-- 内容区 -->
-  <div class="w-full h-[calc(720px-90px-1px)] bg-white flex flex-col p-8 gap-6">
-    {内容}
+  <div class="ppt-slide" style="width:1280px;height:720px;position:relative;overflow:hidden;background:white;">
+    <!-- 顶部装饰线 -->
+    <div class="w-full h-[1px] bg-[#c7020e]"></div>
+    <!-- 标题栏 -->
+    <div class="w-full h-[90px] bg-white border-b border-[#d9d9d9] flex items-center px-8 gap-3">
+      <div class="w-[4px] h-[30px] bg-[#c7020e]"></div>
+      <span class="text-[35px] font-bold text-black">{标题}</span>
+      <span class="text-[19px] text-[#8c8c8c] ml-1">{英文副标题}</span>
+      <span class="ml-auto text-[19px] text-[#8c8c8c]">{页码}</span>
+    </div>
+    <!-- 内容区 -->
+    <div class="w-full h-[calc(720px-90px-1px)] bg-white flex flex-col p-8 gap-6">
+      {内容}
+    </div>
   </div>
 </body>
 </html>
@@ -139,6 +140,11 @@ mkdir -p {output_dir}/pages
 node /Users/yiyu/Pyleaf/ollama-mlflow-demo/skills/builtin/pptx-craft/html-to-pptx/scripts/convert.js {output_dir}/pages/ {output_dir}/{主题}.pptx
 ```
 
+**⚠️ Bash timeout 设置：**
+- 转换需要约 10秒/页
+- 推荐 timeout=600（使用默认值即可，不传递timeout参数）
+- 如有大量页面（>50页），可设置 timeout=1200 或更大（max: 3600）
+
 ### Step 6: Deliver
 
 Verify PPTX file exists and is > 10KB. Tell user the file path.
@@ -149,8 +155,26 @@ Verify PPTX file exists and is > 10KB. Tell user the file path.
 
 - **CRITICAL: Use `.ppt-slide` class** — The container MUST have `class="ppt-slide"`
 - **CRITICAL: Use Tailwind CSS CDN** — `<script src="https://cdn.tailwindcss.com"></script>`
+- **CRITICAL: Bash timeout** — 使用默认600秒，大量页面可设置 timeout=1200 或更大（max: 3600）
 - **Use Tailwind 任意值语法** — `text-[35px]`, `text-[#c7020e]`, `w-[4px]`
 - **File naming:** page-1.pptx.html (with hyphen)
 - **Page size:** 1280x720px fixed
 - **No sub-agents:** Execute all steps directly
-- **No search:** Use user-provided content only
+
+---
+
+## Debugging Conversion Issues
+
+If convert.js fails or produces unexpected output:
+
+- **Do NOT read convert.js** — It's a 400KB obfuscated JavaScript bundle, unreadable by humans/LLMs
+- **Do NOT use Read tool on convert.js** — Large file may cause API errors or model confusion
+- **Correct approach:** Run convert.js and check the actual error output:
+  ```bash
+  node /path/to/convert.js pages_dir/ output.pptx 2>&1
+  ```
+- **Common errors:**
+  - `未找到 .ppt-slide 元素` → HTML missing the `.ppt-slide` class
+  - `paths[0] undefined` → Missing or invalid input/output arguments
+  - `[Error] Command timed out after Xs` → Bash timeout too short, use default 600 or increase
+- **Check generated HTML files first** — Verify `.ppt-slide` class exists before debugging conversion

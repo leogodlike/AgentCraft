@@ -16,16 +16,31 @@ from tools import tool
             "file_path": {
                 "type": "string",
                 "description": "Absolute path to the file to read",
-            }
+            },
+            "limit": {
+                "type": "integer",
+                "description": "Maximum number of lines to read (optional, for large files)",
+            },
         },
         "required": ["file_path"],
     },
 )
-def read_file(file_path: str) -> str:
+def read_file(file_path: str, limit: int | None = None) -> str:
     try:
-        content = Path(file_path).read_text(encoding="utf-8")
+        p = Path(file_path)
+        content = p.read_text(encoding="utf-8")
         lines = content.splitlines()
+
+        # Apply limit if specified
+        if limit and limit > 0:
+            lines = lines[:limit]
+
         numbered = "\n".join(f"{i+1}\t{line}" for i, line in enumerate(lines))
+
+        # Add warning if file was truncated
+        if limit and len(content.splitlines()) > limit:
+            numbered += f"\n\n[Truncated: showing {limit} of {len(content.splitlines())} lines]"
+
         return numbered
     except Exception as e:
         return f"[Error reading file] {e}"
