@@ -2,7 +2,9 @@
 
 **对标 CodeX 的本地 AI Agent 伴侣** — 项目级代码生成、PPT 制作、长程任务编排、定时调度，Everything You Need。
 
-![系统演示](docs/demo.gif)
+![论文结论生成](docs/demo.gif)
+
+![PPT 生成](docs/ppt生成.gif)
 
 ## 快速启动
 
