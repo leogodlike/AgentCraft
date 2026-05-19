@@ -1,8 +1,8 @@
 # AgentCraft
 
-AI Agent with LLM and tools.
+**对标 CodeX 的本地 AI Agent 伴侣** — 项目级代码生成、PPT 制作、长程任务编排、定时调度，Everything You Need。
 
-![系统截图](specs/img.png)
+![系统演示](docs/demo.gif)
 
 ## 快速启动
 
