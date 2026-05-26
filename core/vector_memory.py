@@ -501,7 +501,7 @@ class VectorMemoryStore:
                 continue
 
             try:
-                content = md_file.read_text()
+                content = md_file.read_text(encoding="utf-8")
 
                 # Parse YAML frontmatter
                 if content.startswith("---\n"):

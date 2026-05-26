@@ -91,7 +91,7 @@ class SkillLoader:
             # Load legacy JSON format (backward compatibility)
             for f in sorted(d.glob("*.json")):
                 try:
-                    data = json.loads(f.read_text())
+                    data = json.loads(f.read_text(encoding="utf-8"))
                     skill = Skill.from_dict(data)
                     # Don't override if SKILL.md already loaded
                     if skill.name not in self._skills:
@@ -118,7 +118,7 @@ class SkillLoader:
         ---
         Markdown instructions...
         """
-        content = skill_file.read_text()
+        content = skill_file.read_text(encoding="utf-8")
 
         # Extract YAML frontmatter
         match = re.match(r"^---\n(.*?)\n---\n(.*)$", content, re.DOTALL)

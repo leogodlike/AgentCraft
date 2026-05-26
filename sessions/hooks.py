@@ -236,7 +236,7 @@ def load_hooks_from_config(config_path: Path | str | None = None) -> list[HookMa
         return []
 
     try:
-        data = json.loads(path.read_text())
+        data = json.loads(path.read_text(encoding="utf-8"))
         hooks = []
 
         for cfg in data.get("hooks", []):

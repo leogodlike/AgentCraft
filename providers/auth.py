@@ -138,7 +138,7 @@ class AuthProfileStore:
             return
 
         try:
-            data = yaml.safe_load(self.config_path.read_text())
+            data = yaml.safe_load(self.config_path.read_text(encoding="utf-8"))
             if not data:
                 return
 

@@ -103,7 +103,7 @@ def create_pack(name: str, skills_dir: Path, output_path: Path | None = None) ->
     if skills_dir.is_dir():
         for f in sorted(skills_dir.glob("*.json")):
             try:
-                data = json.loads(f.read_text())
+                data = json.loads(f.read_text(encoding="utf-8"))
                 skill = Skill.from_dict(data)
                 skills.append(skill)
 

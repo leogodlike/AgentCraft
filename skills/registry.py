@@ -42,7 +42,7 @@ class LocalRegistry:
         """Load installed packs from registry file."""
         if self.registry_file.exists():
             try:
-                data = json.loads(self.registry_file.read_text())
+                data = json.loads(self.registry_file.read_text(encoding="utf-8"))
                 for pack_data in data.get("installed", []):
                     pack = SkillPack.from_dict(pack_data)
                     self._installed[pack.name] = pack

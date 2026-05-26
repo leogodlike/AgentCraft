@@ -170,7 +170,7 @@ class ModelCatalog:
         # Load user config if exists
         if self.config_path.exists():
             try:
-                data = yaml.safe_load(self.config_path.read_text())
+                data = yaml.safe_load(self.config_path.read_text(encoding="utf-8"))
                 if data and "models" in data:
                     for name, cfg in data["models"].items():
                         self._models[name] = ModelInfo(
@@ -192,7 +192,7 @@ class ModelCatalog:
         cache_path = self.CACHE_PATH.expanduser()
         if cache_path.exists():
             try:
-                data = json.loads(cache_path.read_text())
+                data = json.loads(cache_path.read_text(encoding="utf-8"))
                 for model, cached in data.get("cache", {}).items():
                     self._cache[model] = ModelCache(
                         model=model,

@@ -112,7 +112,7 @@ class MemoryStore:
         file_path = self._memory_dir / f"{name}.md"
         if not file_path.exists():
             return None
-        return MemoryEntry.from_markdown(file_path.read_text())
+        return MemoryEntry.from_markdown(file_path.read_text(encoding="utf-8"))
 
     def list(self) -> list[MemoryEntry]:
         """List all memory entries."""
@@ -123,7 +123,7 @@ class MemoryStore:
             if file_path.name == self.MEMORY_INDEX_FILE:
                 continue
             try:
-                entries.append(MemoryEntry.from_markdown(file_path.read_text()))
+                entries.append(MemoryEntry.from_markdown(file_path.read_text(encoding="utf-8")))
             except ValueError:
                 continue  # Skip invalid files
         return sorted(entries, key=lambda e: e.created_at, reverse=True)
@@ -176,7 +176,7 @@ class MemoryStore:
         """Get MEMORY.md content for loading into context."""
         index_path = self._memory_dir / self.MEMORY_INDEX_FILE
         if index_path.exists():
-            return index_path.read_text()
+            return index_path.read_text(encoding="utf-8")
         return ""
 
     def get_all_content(self) -> str:

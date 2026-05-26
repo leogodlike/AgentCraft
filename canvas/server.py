@@ -72,7 +72,7 @@ class CanvasChannel:
             html_path = Path(__file__).parent.parent / "static" / "canvas.html"
             if html_path.exists():
                 return HTMLResponse(
-                    content=html_path.read_text(),
+                    content=html_path.read_text(encoding="utf-8"),
                     headers={"Cache-Control": "no-cache, no-store, must-revalidate"},
                 )
             return HTMLResponse(

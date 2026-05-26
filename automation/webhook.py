@@ -56,7 +56,7 @@ class WebhookStore:
         """Load webhook configurations."""
         if self.config_path.exists():
             try:
-                data = json.loads(self.config_path.read_text())
+                data = json.loads(self.config_path.read_text(encoding="utf-8"))
                 for name, cfg in data.get("webhooks", {}).items():
                     self._webhooks[name] = WebhookTrigger(
                         name=name,
