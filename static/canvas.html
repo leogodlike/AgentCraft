@@ -508,6 +508,269 @@
             font-size: 10px;
         }
 
+        /* ===== Process Section (Thinking + Execution, collapsible) ===== */
+        .msg-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .assistant-process {
+            margin: 0 0 12px 0;
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--bg-primary);
+            transition: opacity 0.2s;
+        }
+
+        .assistant-process.streaming-done .process-body {
+            display: none;
+        }
+
+        .process-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--bg-secondary);
+            cursor: pointer;
+            user-select: none;
+            font-size: 13px;
+            transition: background 0.1s;
+        }
+
+        .process-header:hover {
+            background: var(--bg-hover);
+        }
+
+        .process-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .process-extra {
+            font-size: 11px;
+            color: var(--text-muted);
+            flex: 1;
+        }
+
+        .process-toggle {
+            font-size: 11px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .process-body {
+            border-top: 1px solid var(--border-primary);
+            padding: 12px;
+        }
+
+        .process-thinking {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin-bottom: 8px;
+        }
+
+        .process-thinking:empty {
+            display: none;
+        }
+
+        .assistant-content {
+            line-height: 1.7;
+            font-size: 16px;
+            letter-spacing: 0.02em;
+        }
+
+        .assistant-content p { margin: 6px 0; }
+        .assistant-content ul, .assistant-content ol { margin: 6px 0; padding-left: 18px; }
+        .assistant-content li { margin: 3px 0; }
+        .assistant-content strong, .assistant-content b { font-weight: 550; color: var(--text-primary); }
+        .assistant-content h1 { font-size: 1.5em; font-weight: 550; margin: 0.8em 0 0.4em; padding-bottom: 0.25em; border-bottom: 1px solid var(--border-primary); letter-spacing: 0.01em; }
+        .assistant-content h2 { font-size: 1.3em; font-weight: 550; margin: 0.6em 0 0.3em; letter-spacing: 0.01em; }
+        .assistant-content h3 { font-size: 1.15em; font-weight: 550; margin: 0.5em 0 0.25em; letter-spacing: 0.01em; }
+        .assistant-content a { color: var(--accent-primary); text-decoration: none; }
+        .assistant-content a:hover { text-decoration: underline; }
+        .assistant-content blockquote {
+            margin: 8px 0; padding: 6px 12px;
+            border-left: 3px solid var(--border-primary);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+        }
+        .assistant-content blockquote p { margin: 0; }
+        .assistant-content table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 0.95em; }
+        .assistant-content th, .assistant-content td { border: 1px solid var(--border-primary); padding: 6px 10px; text-align: left; }
+        .assistant-content th { background: var(--bg-secondary); font-weight: 600; }
+        .assistant-content hr { border: none; border-top: 1px solid var(--border-primary); margin: 1em 0; }
+        .assistant-content img { max-width: 100%; border-radius: 6px; margin: 8px 0; }
+        .assistant-content code {
+            background: rgba(0,0,0,0.05); padding: 1px 5px; border-radius: 3px;
+            font-size: 0.9em; font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+        }
+        .assistant-content pre {
+            background: #282c34; color: #abb2bf; padding: 12px 14px; border-radius: 6px;
+            margin: 8px 0; overflow-x: auto; font-size: 0.9em; line-height: 1.45;
+        }
+        .assistant-content pre code {
+            background: transparent; padding: 0; border: none; color: inherit; font-size: inherit;
+        }
+
+        /* ===== Thinking Indicator ===== */
+        .thinking-indicator {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .thinking-dots {
+            display: flex;
+            gap: 5px;
+            padding: 4px 0;
+        }
+
+        .thinking-dots span {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            display: inline-block;
+            animation: thinkingBounce 1.4s infinite ease-in-out both;
+        }
+
+        .thinking-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .thinking-dots span:nth-child(2) { animation-delay: -0.16s; }
+        .thinking-dots span:nth-child(3) { animation-delay: 0s; }
+
+        @keyframes thinkingBounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* ===== Tool Execution Cards ===== */
+        .tool-card-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4px 20px;
+        }
+
+        .tool-card {
+            margin: 8px 0;
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--bg-primary);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .tool-card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--bg-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.1s;
+        }
+
+        .tool-card-header:hover { background: var(--bg-hover); }
+
+        .tool-card-icon { width: 20px; text-align: center; font-size: 14px; }
+
+        .tool-card-name {
+            font-weight: 600;
+            flex: 1;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 12px;
+        }
+
+        .tool-card-status { font-size: 12px; color: var(--text-muted); }
+
+        .tool-card-duration {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: monospace;
+            margin-left: 4px;
+        }
+
+        .tool-card-toggle {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-left: auto;
+        }
+
+        .tool-card-body {
+            padding: 10px 12px;
+            font-size: 13px;
+            border-top: 1px solid var(--border-primary);
+        }
+
+        .tool-section-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .tool-args {
+            background: var(--bg-secondary);
+            padding: 8px 10px;
+            border-radius: 4px;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-bottom: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .tool-result-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 8px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            max-height: 150px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            line-height: 1.5;
+        }
+
+        .tool-result-box.tool-error {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #dc2626;
+        }
+
+        .tool-card-loading {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--border-primary);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar { position: fixed; left: 0; top: 0; bottom: 0; z-index: 100; width: 260px; }
@@ -543,6 +806,12 @@
                 </div>
             </div>
             <div class="messages" id="messages"></div>
+            <div class="thinking-indicator" id="thinkingIndicator" style="display: none;">
+                <div class="thinking-dots">
+                    <span></span><span></span><span></span>
+                </div>
+                <span id="thinkingText">思考中...</span>
+            </div>
         </main>
 
         <footer class="input-area">
@@ -583,6 +852,8 @@
 
         // Init - Load session list from backend, create new chat for current page
         async function init() {
+            // Ensure thinking indicator is hidden on page load
+            document.getElementById('thinkingIndicator').style.display = 'none';
             setupEvents();
 
             // Load session list from backend (lightweight)
@@ -1100,12 +1371,74 @@
 
         // Messages
         function renderMessages(msgs) {
-            document.getElementById('messages').innerHTML = msgs.map(m => `
-                <div class="msg ${m.role}">
-                    <div class="avatar">${m.role === 'user' ? '👤' : '🤖'}</div>
-                    <div class="content">${m.role === 'user' ? esc(m.content) : marked.parse(preprocessMarkdown(m.content))}</div>
-                </div>
-            `).join('');
+            document.getElementById('messages').innerHTML = msgs.map(m => {
+                // Assistant message with COT metadata → render with collapsible process section
+                if (m.role === 'assistant' && m.metadata && m.metadata.cot_content) {
+                    const meta = m.metadata;
+                    const summary = [];
+                    if (meta.tool_turns > 0) summary.push(meta.tool_turns + '轮推理');
+                    if (meta.tool_count > 0) summary.push(meta.tool_count + '个工具');
+
+                    // Build tool cards HTML from saved metadata
+                    let toolsHtml = '';
+                    if (meta.tools && meta.tools.length > 0) {
+                        toolsHtml = meta.tools.map(t => {
+                            const argsDisplay = t.arguments
+                                ? JSON.stringify(t.arguments, null, 2)
+                                : '(无参数)';
+                            const statusHtml = t.error
+                                ? '<span class="tool-card-status">❌ 失败</span>'
+                                : `<span class="tool-card-status">✅ 完成${t.duration_ms ? ' <span class="tool-card-duration">⏱ ' + t.duration_ms + 'ms</span>' : ''}</span>`;
+                            const resultHtml = t.error
+                                ? `<div class="tool-result-box tool-error">${esc(t.error)}</div>`
+                                : `<div class="tool-result-box">${esc(t.content_preview || '(无返回内容)')}</div>`;
+                            return `
+                                <div class="tool-card">
+                                    <div class="tool-card-header" onclick="toggleToolCard(this)">
+                                        <span class="tool-card-icon">🔧</span>
+                                        <span class="tool-card-name">${esc(t.name)}</span>
+                                        ${statusHtml}
+                                        <span class="tool-card-toggle">▶</span>
+                                    </div>
+                                    <div class="tool-card-body" style="display: none;">
+                                        <div class="tool-section-label">参数</div>
+                                        <div class="tool-args">${esc(argsDisplay)}</div>
+                                        <div class="tool-section-label">结果</div>
+                                        ${resultHtml}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    }
+
+                    return `
+                        <div class="msg assistant">
+                            <div class="avatar">🤖</div>
+                            <div class="msg-body">
+                                <div class="assistant-process">
+                                    <div class="process-header" onclick="toggleProcess(this)">
+                                        <span class="process-label">💭 思考过程</span>
+                                        <span class="process-extra">${esc(summary.join(' · '))}</span>
+                                        <span class="process-toggle">▶ 展开</span>
+                                    </div>
+                                    <div class="process-body" style="display: none;">
+                                        <div class="process-thinking">${esc(meta.cot_content)}</div>
+                                        <div class="tool-card-container">${toolsHtml}</div>
+                                    </div>
+                                </div>
+                                <div class="assistant-content content">${marked.parse(preprocessMarkdown(m.content))}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                // Standard rendering for user/tool/assistant messages
+                return `
+                    <div class="msg ${m.role}">
+                        <div class="avatar">${m.role === 'user' ? '👤' : '🤖'}</div>
+                        <div class="content">${m.role === 'user' ? esc(m.content) : marked.parse(preprocessMarkdown(m.content))}</div>
+                    </div>
+                `;
+            }).join('');
             scrollDown();
         }
 
@@ -1122,12 +1455,87 @@
             return div;
         }
 
+        function createAssistantMessage() {
+            hideWelcome();
+            const div = document.createElement('div');
+            div.className = 'msg assistant';
+            const uid = 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
+            div.innerHTML = `
+                <div class="avatar">🤖</div>
+                <div class="msg-body">
+                    <div class="assistant-process" id="process-${uid}">
+                        <div class="process-header" onclick="toggleProcess(this)">
+                            <span class="process-label">💭 思考过程</span>
+                            <span class="process-extra" id="extra-${uid}"></span>
+                            <span class="process-toggle" id="toggle-${uid}">▼ 收起</span>
+                        </div>
+                        <div class="process-body">
+                            <div class="process-thinking" id="thinking-${uid}"></div>
+                            <div class="tool-card-container"></div>
+                        </div>
+                    </div>
+                    <div class="assistant-content content" id="content-${uid}" style="display: none;"></div>
+                </div>
+            `;
+            document.getElementById('messages').appendChild(div);
+            scrollDown();
+            return {
+                div,
+                processSection: div.querySelector('.assistant-process'),
+                processBody: div.querySelector('.process-body'),
+                processThinkingEl: div.querySelector('.process-thinking'),
+                contentEl: div.querySelector('.assistant-content'),
+                processToggle: div.querySelector('.process-toggle'),
+                processExtra: div.querySelector('.process-extra'),
+                toolCardContainer: div.querySelector('.tool-card-container'),
+            };
+        }
+
+        function toggleProcess(headerEl) {
+            const section = headerEl.closest('.assistant-process');
+            const body = section.querySelector('.process-body');
+            const toggle = headerEl.querySelector('.process-toggle');
+            const isHidden = body.style.display === 'none' || getComputedStyle(body).display === 'none';
+            if (isHidden) {
+                body.style.display = 'block';
+                toggle.textContent = '▼ 收起';
+            } else {
+                body.style.display = 'none';
+                toggle.textContent = '▶ 展开';
+            }
+        }
+
+        function toggleToolCard(headerEl) {
+            const card = headerEl.closest('.tool-card');
+            const body = card.querySelector('.tool-card-body');
+            const toggle = headerEl.querySelector('.tool-card-toggle');
+            const isHidden = body.style.display === 'none' || getComputedStyle(body).display === 'none';
+            if (isHidden) {
+                body.style.display = 'block';
+                toggle.textContent = '▼';
+            } else {
+                body.style.display = 'none';
+                toggle.textContent = '▶';
+            }
+        }
+
         function updateLastMsg(content) {
             const msgs = document.getElementById('messages');
             const last = msgs.lastElementChild;
             if (last && last.classList.contains('assistant')) {
-                last.querySelector('.content').innerHTML = marked.parse(preprocessMarkdown(content));
-                scrollDown();
+                // New structure: update process-thinking (for canvas streaming)
+                const processThinking = last.querySelector('.process-thinking');
+                if (processThinking) {
+                    processThinking.textContent = content;
+                    scrollDown();
+                    return;
+                }
+                // Old structure fallback
+                const contentEl = last.querySelector('.content');
+                if (contentEl) {
+                    contentEl.innerHTML = marked.parse(preprocessMarkdown(content));
+                    scrollDown();
+                }
             }
         }
 
@@ -1191,9 +1599,19 @@
                 renderChatList();
             }
 
-            const msgDiv = addMsg('assistant', '');
-            const contentEl = msgDiv.querySelector('.content');
-            let fullContent = '';
+            const msgParts = createAssistantMessage();
+            const msgDiv = msgParts.div;
+            const contentEl = msgParts.contentEl;
+            const processSection = msgParts.processSection;
+            const processThinkingEl = msgParts.processThinkingEl;
+            const processToggle = msgParts.processToggle;
+            const processExtra = msgParts.processExtra;
+            let toolCardContainer = msgParts.toolCardContainer;
+            let toolCards = {};
+            let currentToolTurn = 0;
+            let fullContent = '';        // ALL streamed text (for answer + backend)
+            let cotContent = '';         // COT reasoning text (tool_exec 之前的推理)
+            let cotFinalized = false;    // 首次 tool_exec 后冻结 COT
             let isStreaming = true;
 
             try {
@@ -1228,6 +1646,12 @@
                 function renderContent() {
                     const now = Date.now();
                     if (now - lastRenderTime >= renderInterval || !isStreaming) {
+                        // COT: process section shows ONLY the reasoning text (before first tool call)
+                        if (isStreaming && cotContent) {
+                            processThinkingEl.textContent = cotContent;
+                        }
+                        // Answer: rendered markdown in content section (full text)
+                        contentEl.style.display = 'block';
                         contentEl.innerHTML = marked.parse(preprocessMarkdown(fullContent));
                         scrollDown();
                         lastRenderTime = now;
@@ -1251,21 +1675,119 @@
                     for (let i = 0; i < lines.length; i++) {
                         const line = lines[i];
 
-                        // Handle SSE events (tool execution notifications)
+                        // Handle SSE events
                         if (line.startsWith('event:')) {
                             const eventType = line.slice(6).trim();
-                            // Check next line for data
+                            // Look ahead for the data line
+                            let dataLine = null;
                             if (i + 1 < lines.length && lines[i + 1].startsWith('data:')) {
-                                try {
-                                    const eventData = JSON.parse(lines[i + 1].slice(5).trim());
-                                    if (eventType === 'tool_exec') {
-                                        // Use markdown callout format for better display
-                                        const toolNotice = `\n> 🔧 **正在执行工具**: ${eventData.tools.join(', ')}\n\n`;
-                                        fullContent += toolNotice;
-                                        // Don't render here, let timer handle it
+                                dataLine = lines[i + 1].slice(5).trim();
+                                i++; // Skip the data line
+                            }
+
+                            try {
+                                const eventData = dataLine ? JSON.parse(dataLine) : null;
+
+                                // --- thinking event: show status in process section + animated indicator ---
+                                if (eventType === 'thinking') {
+                                    const status = (eventData && eventData.status) || '思考中...';
+                                    processThinkingEl.textContent = '● ● ● ' + status;
+                                    const indicator = document.getElementById('thinkingIndicator');
+                                    indicator.style.display = 'flex';
+                                    document.getElementById('thinkingText').textContent = status;
+                                    continue;
+                                }
+
+                                // --- thinking_end event: hide indicators ---
+                                if (eventType === 'thinking_end') {
+                                    document.getElementById('thinkingIndicator').style.display = 'none';
+                                    continue;
+                                }
+
+                                // --- tool_exec event: freeze COT, create tool cards ---
+                                if (eventType === 'tool_exec' && eventData && eventData.tools) {
+                                    currentToolTurn = eventData.turn || 1;
+                                    cotFinalized = true;  // Freeze COT text at first tool call
+
+                                    // Create a card for each tool
+                                    for (const tool of eventData.tools) {
+                                        const cardId = tool.id || 'tool-' + Math.random().toString(36).slice(2);
+                                        const card = document.createElement('div');
+                                        card.className = 'tool-card';
+                                        card.dataset.cardId = cardId;
+
+                                        const argsDisplay = tool.arguments
+                                            ? JSON.stringify(tool.arguments, null, 2)
+                                            : '(无参数)';
+
+                                        card.innerHTML = `
+                                            <div class="tool-card-header">
+                                                <span class="tool-card-icon">🔧</span>
+                                                <span class="tool-card-name">${esc(tool.name)}</span>
+                                                <span class="tool-card-status"><span class="tool-card-loading"></span>执行中...</span>
+                                                <span class="tool-card-toggle">▼</span>
+                                            </div>
+                                            <div class="tool-card-body">
+                                                <div class="tool-section-label">参数</div>
+                                                <div class="tool-args">${esc(argsDisplay)}</div>
+                                                <div class="tool-section-label">结果</div>
+                                                <div class="tool-result-box">等待执行结果...</div>
+                                            </div>
+                                        `;
+
+                                        // Toggle collapse on header click
+                                        card.querySelector('.tool-card-header').onclick = () => {
+                                            const body = card.querySelector('.tool-card-body');
+                                            const toggle = card.querySelector('.tool-card-toggle');
+                                            const isHidden = body.style.display === 'none';
+                                            body.style.display = isHidden ? 'block' : 'none';
+                                            toggle.textContent = isHidden ? '▼' : '▶';
+                                        };
+
+                                        toolCardContainer.appendChild(card);
+                                        toolCards[cardId] = card;
                                     }
-                                    i++; // Skip the data line we already processed
-                                } catch {}
+                                    continue;
+                                }
+
+                                // --- tool_result event: update tool card with execution result ---
+                                if (eventType === 'tool_result' && eventData) {
+                                    // Find card by tool_call_id (iterate all cards)
+                                    const cardId = eventData.tool_call_id;
+                                    let card = toolCards[cardId];
+
+                                    // Fallback: search by tool name if not found by id
+                                    if (!card) {
+                                        const existingCards = msgDiv.querySelectorAll('.tool-card');
+                                        for (const c of existingCards) {
+                                            const nameEl = c.querySelector('.tool-card-name');
+                                            if (nameEl && nameEl.textContent === eventData.tool_name) {
+                                                card = c;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    if (card) {
+                                        const statusEl = card.querySelector('.tool-card-status');
+                                        const resultEl = card.querySelector('.tool-result-box');
+
+                                        if (eventData.error) {
+                                            statusEl.innerHTML = '❌ 失败';
+                                            resultEl.className = 'tool-result-box tool-error';
+                                            resultEl.textContent = esc(eventData.error);
+                                        } else {
+                                            const duration = eventData.duration_ms
+                                                ? ` <span class="tool-card-duration">⏱ ${eventData.duration_ms}ms</span>`
+                                                : '';
+                                            statusEl.innerHTML = '✅ 完成' + duration;
+                                            resultEl.textContent = esc(eventData.content_preview || '(无返回内容)');
+                                        }
+                                    }
+                                    continue;
+                                }
+                            } catch (e) {
+                                console.warn('[SSE] Event parse error:', e);
                             }
                             continue;
                         }
@@ -1278,21 +1800,52 @@
                             const data = JSON.parse(json);
                             if (data.text) {
                                 fullContent += data.text;
-                                // Don't render here - let timer handle it for performance
+                                if (!cotFinalized) cotContent += data.text;
+                                // Hide thinking indicator when real text arrives
+                                document.getElementById('thinkingIndicator').style.display = 'none';
                             } else if (data.finish_reason) {
-                                // Stream finished - final render
+                                // Stream finished - show final answer, collapse process
                                 isStreaming = false;
                                 clearInterval(renderTimer);
+                                contentEl.style.display = 'block';
                                 contentEl.innerHTML = marked.parse(preprocessMarkdown(fullContent));
+                                // Auto-collapse or hide process section
+                                const toolCount = Object.keys(toolCards).length;
+                                if (toolCount === 0) {
+                                    processSection.style.display = 'none';
+                                } else {
+                                    processSection.querySelector('.process-body').style.display = 'none';
+                                    processToggle.textContent = '▶ 展开';
+                                    const summary = [];
+                                    if (currentToolTurn > 0) summary.push(currentToolTurn + '轮推理');
+                                    if (toolCount > 0) summary.push(toolCount + '个工具');
+                                    if (summary.length) processExtra.textContent = summary.join(' · ');
+                                }
                                 scrollDown();
                             }
                         } catch {}
                     }
                 }
 
-                // Final markdown render after stream ends
-                contentEl.innerHTML = marked.parse(preprocessMarkdown(fullContent));
-                scrollDown();
+                // Final render after stream ends (fallback)
+                if (fullContent) {
+                    isStreaming = false;
+                    clearInterval(renderTimer);
+                    contentEl.style.display = 'block';
+                    contentEl.innerHTML = marked.parse(preprocessMarkdown(fullContent));
+                    const toolCount = Object.keys(toolCards).length;
+                    if (toolCount === 0) {
+                        processSection.style.display = 'none';
+                    } else {
+                        processSection.querySelector('.process-body').style.display = 'none';
+                        processToggle.textContent = '▶ 展开';
+                        const summary = [];
+                        if (currentToolTurn > 0) summary.push(currentToolTurn + '轮推理');
+                        if (toolCount > 0) summary.push(toolCount + '个工具');
+                        if (summary.length) processExtra.textContent = summary.join(' · ');
+                    }
+                    scrollDown();
+                }
 
             } catch (e) {
                 console.error(e);

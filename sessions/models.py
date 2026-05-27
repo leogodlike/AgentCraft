@@ -54,6 +54,7 @@ class Message:
     name: str | None = None  # tool name for tool role
     created_at: str = ""
     token_count: int = 0
+    metadata: str | None = None  # JSON string: {cot_content, tool_turns, tool_count}
 
     def to_openai_format(self) -> dict[str, Any]:
         """Convert to OpenAI-compatible message dict."""
@@ -65,6 +66,12 @@ class Message:
             msg["tool_call_id"] = self.tool_call_id
         if self.name:
             msg["name"] = self.name
+        if self.metadata:
+            import json
+            try:
+                msg["metadata"] = json.loads(self.metadata)
+            except json.JSONDecodeError:
+                pass
         return msg
 
 
@@ -148,6 +155,12 @@ def init_db(db_path: str) -> sqlite3.Connection:
         conn.execute("SELECT message_count_batch FROM sessions LIMIT 1")
     except sqlite3.OperationalError:
         conn.execute("ALTER TABLE sessions ADD COLUMN message_count_batch INTEGER NOT NULL DEFAULT 0")
+
+    # 6. metadata column in messages
+    try:
+        conn.execute("SELECT metadata FROM messages LIMIT 1")
+    except sqlite3.OperationalError:
+        conn.execute("ALTER TABLE messages ADD COLUMN metadata TEXT")
 
     conn.commit()
     return conn

@@ -1273,6 +1273,7 @@ async def _handle_streaming_direct(
     kwargs = {k: v for k, v in payload.items() if k not in ("messages", "stream", "model")}
 
     yield f"event: stream_start\ndata: {{\"model\": \"{model}\"}}\n\n"
+    yield f"event: thinking\ndata: {{\"status\": \"思考中...\"}}\n\n"
 
     # Save user messages to session
     if session_id:
@@ -1288,7 +1289,10 @@ async def _handle_streaming_direct(
                 )
 
     full_content = ""
+    cot_content = ""       # Text before first tool call (COT reasoning)
+    cot_finalized = False  # Freeze COT after first tool_exec
     tool_calls_list = []
+    _tool_call_args: dict[str, tuple[str, dict]] = {}  # tc_id -> (name, arguments)
     n_tool_turns = 0
     executor = ToolExecutor(registry=_unified_registry, session_id=session_id, canvas_manager=_canvas_manager, hook_executor=_hook_executor)
 
@@ -1356,6 +1360,8 @@ async def _handle_streaming_direct(
             retry_count = 0
 
             while retry_count <= max_retries:
+                if retry_count > 0:
+                    yield f"event: thinking\ndata: {{\"status\": \"重试中... (第{retry_count}次)\"}}\n\n"
                 try:
                     stream = provider.stream(messages, model, stream=True, **kwargs)
                     turn_content = ""
@@ -1371,10 +1377,13 @@ async def _handle_streaming_direct(
                             text = delta["content"]
                             turn_content += text
                             full_content += text
+                            if not cot_finalized:
+                                cot_content += text
                             escaped = text.replace('"', '\\"').replace('\n', '\\n').replace('\r', '')
                             yield f"data: {{\"text\": \"{escaped}\"}}\n\n"
 
                         if delta.get("tool_calls"):
+                            cot_finalized = True  # Freeze COT at first tool call
                             for tc in delta["tool_calls"]:
                                 idx = tc.get("index", 0)
                                 while idx >= len(tool_calls_list):
@@ -1462,6 +1471,7 @@ async def _handle_streaming_direct(
                             logger.warning(f"[Goal] 达到 500 次验证上限")
                             yield f"event: goal_limit\ndata: {{\"message\": \"目标验证达到500次上限\"}}\n\n"
                             del _goal_managers[session_id]
+                            yield f"event: thinking_end\ndata: {{\"status\": \"done\"}}\n\n"
                             yield f"data: {{\"finish_reason\": \"stop\"}}\n\n"
                             break
 
@@ -1483,6 +1493,7 @@ async def _handle_streaming_direct(
                             logger.info(f"[Goal] 目标已达成: {goal.condition}")
                             yield f"event: goal_met\ndata: {{\"condition\": \"{goal.condition}\"}}\n\n"
                             del _goal_managers[session_id]
+                            yield f"event: thinking_end\ndata: {{\"status\": \"done\"}}\n\n"
                             yield f"data: {{\"finish_reason\": \"stop\"}}\n\n"
                             break
                         else:
@@ -1497,18 +1508,41 @@ async def _handle_streaming_direct(
                                 logger.warning(f"[Goal] 超过最大轮数 (50)")
                                 yield f"event: goal_exhausted\ndata: {{\"turns\": {n_tool_turns}, \"feedback\": \"{feedback[:200].replace(chr(34), chr(92)+chr(34))}\"}}\n\n"
                                 del _goal_managers[session_id]
+                                yield f"event: thinking_end\ndata: {{\"status\": \"done\"}}\n\n"
                                 yield f"data: {{\"finish_reason\": \"stop\"}}\n\n"
                                 break
 
                 # No goal, normal exit
+                yield f"event: thinking_end\ndata: {{\"status\": \"done\"}}\n\n"
                 yield f"data: {{\"finish_reason\": \"stop\"}}\n\n"
                 break
 
             # Execute tools
-            tool_names = [tc["function"]["name"] for tc in tool_calls_list]
-            yield f"event: tool_exec\ndata: {{\"tools\": {json.dumps(tool_names)}}}\n\n"
+            tool_details = []
+            for tc in tool_calls_list:
+                try:
+                    args_parsed = json.loads(tc["function"]["arguments"])
+                except (json.JSONDecodeError, KeyError):
+                    args_parsed = {}
+                tool_details.append({
+                    "name": tc["function"]["name"],
+                    "arguments": args_parsed,
+                    "id": tc["id"]
+                })
+                _tool_call_args[tc["id"]] = (tc["function"]["name"], args_parsed)
+            yield f"event: tool_exec\ndata: {json.dumps({'tools': tool_details, 'turn': n_tool_turns + 1})}\n\n"
+            yield f"event: thinking\ndata: {{\"status\": \"正在执行工具...\"}}\n\n"
 
             results = await executor.execute_tools(tool_calls_list)
+
+            # Send tool result events to frontend
+            for tc in tool_calls_list:
+                tc_id = tc["id"]
+                result = results.get(tc_id)
+                if result:
+                    yield f"event: tool_result\ndata: {json.dumps({'tool_call_id': tc_id, 'tool_name': result.tool_name, 'duration_ms': result.duration_ms, 'error': result.error, 'content_preview': (result.content or '')[:500]})}\n\n"
+                else:
+                    yield f"event: tool_result\ndata: {json.dumps({'tool_call_id': tc_id, 'tool_name': tc['function']['name'], 'error': '未执行'})}\n\n"
 
             messages.append({"role": "assistant", "content": turn_content, "tool_calls": tool_calls_list})
             for tc in tool_calls_list:
@@ -1520,13 +1554,33 @@ async def _handle_streaming_direct(
 
             messages = clean_orphan_tool_messages(messages)
             n_tool_turns += 1
+            yield f"event: thinking\ndata: {{\"status\": \"分析结果，继续推理... (第{n_tool_turns + 1}轮)\"}}\n\n"
 
     except Exception as e:
         logger.error(f"[Stream] Unexpected error: {e}")
         yield f"event: error\ndata: {{\"error\": \"{str(e)}\"}}\n\n"
 
     if session_id and full_content:
-        _session_manager.add_message(session_id, "assistant", full_content)  # assistant msg, no trigger
+        metadata_str = None
+        if cot_finalized:
+            tool_details_meta = []
+            if hasattr(executor, '_results') and executor._results:
+                for tc_id, r in executor._results.items():
+                    name, args = _tool_call_args.get(tc_id, ("", {}))
+                    tool_details_meta.append({
+                        "name": name,
+                        "arguments": args,
+                        "duration_ms": r.duration_ms,
+                        "error": r.error,
+                        "content_preview": (r.content or '')[:200],
+                    })
+            metadata_str = json.dumps({
+                "cot_content": cot_content,
+                "tool_turns": n_tool_turns,
+                "tool_count": len(tool_details_meta),
+                "tools": tool_details_meta,
+            })
+        _session_manager.add_message(session_id, "assistant", full_content, metadata=metadata_str)
 
     # === SESSION_END Hook ===
     if _hook_executor and session_id:

@@ -105,6 +105,7 @@ class SessionManager:
         tool_calls: str | None = None,
         tool_call_id: str | None = None,
         name: str | None = None,
+        metadata: str | None = None,
     ) -> tuple[Message, bool]:
         """Add a message to session.
 
@@ -128,8 +129,8 @@ class SessionManager:
 
         self._conn.execute(
             "INSERT INTO messages (id, session_id, role, content, tool_calls, "
-            "tool_call_id, name, created_at, token_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (mid, session_id, role, content, tool_calls, tool_call_id, name, now, token_count),
+            "tool_call_id, name, created_at, token_count, metadata) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (mid, session_id, role, content, tool_calls, tool_call_id, name, now, token_count, metadata),
         )
         # Update session counters
         self._conn.execute(
@@ -165,6 +166,7 @@ class SessionManager:
             content=content, tool_calls=tool_calls,
             tool_call_id=tool_call_id, name=name,
             created_at=now, token_count=token_count,
+            metadata=metadata,
         ), should_trigger_extraction
 
     def get_messages(
@@ -247,6 +249,7 @@ class SessionManager:
             tool_call_id=row[5], name=row[6],
             created_at=row[7],
             token_count=row[8] if len(row) > 8 else 0,
+            metadata=row[9] if len(row) > 9 else None,
         )
 
 
